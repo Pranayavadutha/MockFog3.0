@@ -1,0 +1,5 @@
+fastapi==0.110.1
+uvicorn[standard]==0.29.0
+docker==7.1.0
+prometheus-client==0.20.0
+requests==2.32.3

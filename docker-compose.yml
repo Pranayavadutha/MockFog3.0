@@ -1,0 +1,34 @@
+version: "3.9"
+
+services:
+  orchestrator:
+    build: .
+    container_name: orchestrator_api
+    environment:
+      LOG_LEVEL: INFO
+      GRAFANA_URL: "http://localhost:3000/d/dynamic-fog/mockfog-dynamic-fog?orgId=1"
+      ORCHESTRATOR_NETWORK: "orcherstarion_dyanimc_default"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "8000:8000"
+    depends_on:
+      - grafana
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:10.3.1
+    container_name: g1
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_PROVISIONING_ENABLED: "true"
+      GF_INSTALL_PLUGINS: "simpod-json-datasource"
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /var/lib/grafana/dashboards/mockfog-dashboard.json
+    volumes:
+      - ./grafana-provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./grafana-provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./grafana_dashboard.json:/var/lib/grafana/dashboards/mockfog-dashboard.json:ro
+    ports:
+      - "3000:3000"
+    restart: unless-stopped

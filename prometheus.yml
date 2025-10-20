@@ -1,0 +1,25 @@
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+
+scrape_configs:
+  - job_name: "dynamic_orchestrator"
+    metrics_path: /metrics
+    static_configs:
+      - targets:
+          - "orchestrator:8000"
+  - job_name: "fog_nodes"
+    metrics_path: /metrics
+    http_sd_configs:
+      - url: "http://orchestrator:8000/prometheus/fog_nodes"
+        refresh_interval: 15s
+  - job_name: "prometheus"
+    static_configs:
+      - targets:
+          - "localhost:9090"
+  - job_name: "fog_nodes"
+    metrics_path: /metrics
+    scrape_interval: 5s
+    http_sd_configs:
+      - url: "http://orchestrator:8000/prometheus/fog_nodes"
+        refresh_interval: 15s
